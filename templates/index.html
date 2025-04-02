@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Image Detector</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #0073e6;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            width: 100%;
+        }
+        .upload-box {
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed #0073e6;
+            cursor: pointer;
+            color: #0073e6;
+            background-color: #eaf2ff;
+            border-radius: 10px;
+            font-size: 18px;
+            position: relative;
+            margin: 20px auto;
+        }
+        .upload-box:hover {
+            background-color: #d0e4ff;
+        }
+        .upload-box::before {
+            content: '+';
+            font-size: 48px;
+            color: #0073e6;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: 80%;
+        }
+        .real { background-color: #28a745; }
+        .fake { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Fake Image Detection</div>
+        <div class="upload-box" id="drop-area"></div>
+        <input type="file" id="file-input" style="display: none;">
+        <img id="preview" style="display: none;">
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        let dropArea = document.getElementById("drop-area");
+        let fileInput = document.getElementById("file-input");
+        let preview = document.getElementById("preview");
+        let resultDiv = document.getElementById("result");
+
+        dropArea.addEventListener("click", () => fileInput.click());
+        dropArea.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropArea.style.background = "#cce7ff";
+        });
+        dropArea.addEventListener("dragleave", () => dropArea.style.background = "#eaf2ff");
+        dropArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropArea.style.background = "#eaf2ff";
+            let file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+        fileInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
+
+        function handleFile(file) {
+            let reader = new FileReader();
+            reader.onload = () => {
+                preview.src = reader.result;
+                preview.style.display = "block";
+                uploadFile(file);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function uploadFile(file) {
+            let formData = new FormData();
+            formData.append("file", file);
+            $.ajax({
+                url: "/upload",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                    resultDiv.innerHTML = `Prediction: ${data.prediction}`;
+                    resultDiv.className = `result ${data.prediction.toLowerCase()}`;
+                    resultDiv.style.display = "block";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
