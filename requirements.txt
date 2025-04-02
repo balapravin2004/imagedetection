@@ -5,3 +5,4 @@ mahotas
 joblib
 Werkzeug
 gunicorn
+scikit-learn
