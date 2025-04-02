@@ -1,6 +1,6 @@
 Flask
 numpy
-opencv-pythons
+opencv-python
 mahotas
 joblib
 Werkzeug
