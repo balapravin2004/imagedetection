@@ -1,0 +1,7 @@
+Flask
+numpy
+opencv-pythons
+mahotas
+joblib
+Werkzeug
+gunicorn
