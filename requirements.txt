@@ -1,8 +1,10 @@
 Flask
 numpy
-opencv-pythons
+opencv-python
 mahotas
 joblib
 Werkzeug
 gunicorn
 flask_cors 
+scikit-learn
+
